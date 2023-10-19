@@ -1,0 +1,83 @@
+# 🕵️‍♀️ ProxyCrypt
+# =============
+#
+# Nginx default server configuration.
+#
+# Copyright © 2023, California Institute of Technology ("Caltech").
+# U.S. Government sponsorship acknowledged.
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# • Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+# • Redistributions must reproduce the above copyright notice, this list of
+#   conditions and the following disclaimer in the documentation and/or other
+#   materials provided with the distribution.
+# • Neither the name of Caltech nor its operating division, the Jet Propulsion
+#   Laboratory, nor the names of its contributors may be used to endorse or
+#   promote products derived from this software without specific prior written
+#   permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Note that environment variables are interpolated into this file at container start.
+
+server {
+    listen              443 ssl;
+    listen              [::]:443 ssl;
+    server_name         localhost;
+    ssl_certificate     /etc/ssl/self.cert;
+    ssl_certificate_key /etc/ssl/self.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_session_cache   shared:SSL:512k;
+    ssl_session_timeout 5m;
+
+    # Static assets; PROXY_PATH must end in `/`
+    location ${PROXY_PATH}static/ {
+        alias /app/static/;
+    }
+
+    # Media; PROXY_PATH must end in `/`
+    location ${PROXY_PATH}media/ {
+        alias /app/media/;
+    }
+
+    # Reverse-proxy
+    location ${PROXY_PATH} {
+        proxy_pass       ${PROXY_URL};
+        proxy_redirect   ${PROXY_REDIRECT};
+        proxy_set_header Host $http_host;
+        proxy_set_header Origin http://$http_host;
+        proxy_set_header X-Forwarded-Prefix ${PROXY_PATH};
+        proxy_set_header X-Forwarded-Port ${PROXY_PORT};
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Real-IP $remote_addr;
+        # Disclosure reduction
+        proxy_hide_header X-Powered-By;
+        proxy_ssl_verify off;
+    }
+
+    # Use Nginx's own error pages to save time
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
+
+# -*- mode: nginx; tab-width: 4; -*-
+
