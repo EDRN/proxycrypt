@@ -22,6 +22,8 @@ To build the ProxyCrypt image, run:
 
     docker image build --tag edrndocker/proxycrypt --file docker/Dockerfile .
 
+Or just make a push to `main` and let Github Actions handle it.
+
 To run it, put it in your Docker Composition/Swarm/etc., and set these environment variables as needed:
 
 | Variable         | Use                                                                     | Default            |

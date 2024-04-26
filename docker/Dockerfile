@@ -3,7 +3,7 @@
 #
 # Simple image based on Nginx and Alpine: ProxyCrypt adds OpenSSL and some custom configuration.
 #
-# Copyright © 2023, California Institute of Technology ("Caltech").
+# Copyright © 2023–2024, California Institute of Technology ("Caltech").
 # U.S. Government sponsorship acknowledged.
 #
 # All rights reserved.
