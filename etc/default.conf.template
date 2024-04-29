@@ -45,6 +45,8 @@ server {
     ssl_ciphers         HIGH:!aNULL:!MD5;
     ssl_session_cache   shared:SSL:512k;
     ssl_session_timeout 5m;
+    # Make big Wagtail uploads work
+    client_max_body_size 768M;
 
     # Static assets; PROXY_PATH must end in `/`
     location ${PROXY_PATH}static/ {
