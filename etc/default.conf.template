@@ -64,7 +64,7 @@ server {
         proxy_redirect   ${PROXY_REDIRECT};
         proxy_set_header Host              $upstream_host;
         proxy_set_header X-Forwarded-Host  $upstream_host;
-        proxy_set_header X-Forwarded-Proto $upstream_proto;
+        proxy_set_header X-Forwarded-Proto https;
         proxy_set_header X-Forwarded-Port  $upstream_port;
 
         proxy_set_header X-Forwarded-Prefix ${PROXY_PATH};
