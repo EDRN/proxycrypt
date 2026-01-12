@@ -17,6 +17,7 @@ on:
     push:
         branches:
             -   main
+            -   issue/**
         paths:
             -   'docker/**'
             -   'etc/**'
@@ -40,7 +41,7 @@ jobs:
                     password: ${{secrets.DOCKERHUB_TOKEN}}
             -
                 name: 📚 Repository Checkout
-                uses: actions/checkout@v4
+                uses: actions/checkout@v6
             -
                 name: 🎰 QEMU Multiple Machine Emulation
                 uses: docker/setup-qemu-action@v3
@@ -49,7 +50,7 @@ jobs:
                 uses: docker/setup-buildx-action@v3
             -
                 name: 🧱 Image Construction and Publication
-                uses: docker/build-push-action@v5
+                uses: docker/build-push-action@v6
                 with:
                     context: .
                     file: docker/Dockerfile
